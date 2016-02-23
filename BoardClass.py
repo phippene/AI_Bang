@@ -1,4 +1,5 @@
 #Board Class
+# tracks each player's health, as well as status/gun cards played on board
 
 import Card
 import Deck
@@ -136,6 +137,71 @@ class Boards:
         else:
             return False
 
+    def canPlay(self,playerNum):
+        return health[playerNum] == 0
+
+    def Winner(self):
+        dead = [0,0,0,0] #sheriff,outlaws,renegade,deputys
+        for r in role:
+            if health[r] == 0:
+                if role[r] == "Sheriff":
+                    dead[0]++
+                elif role[r] == "Outlaw":
+                    dead[1]++
+                elif role[r] == "Renegade":
+                    dead[2]++
+                elif role[r] == "Deputy":
+                    dead[3]++
+                    
+        if role.len() == 4:
+            if dead[0] == 1 && dead[1] < 2:
+                #sheriff dead & 1+ outlaw alive
+                return "Outlaws"
+            elif dead[0] == 1 && dead[1] == 2 && dead[2] == 0:
+                #sheriff & outlaws dead, renegade alive
+                return "Renegade"
+            elif dead[0] == 0 && dead[1] == 2 && dead[2] == 1:
+                #sheriff alive, outlaws & renegade dead
+                return "Sheriff"
+            else: return None
+            
+        elif role.len() == 5: # +1 deputy
+            if dead[0] == 1 && dead[1] < 2:
+                #sheriff dead & 1+ outlaw alive
+                return "Outlaws"
+            elif dead[0] == 1 && dead[1] == 2 && dead[2] == 0 && dead[4] == 1:
+                #sheriff & outlaws & deputy dead, renegade alive
+                return "Renegade"
+            elif dead[0] == 0 && dead[1] == 2 && dead[2] == 1:
+                #sheriff alive, outlaws & renegade dead
+                return "Sheriff/Deputy"
+            else: return None
+            
+        elif role.len() == 6: # +1 outlaw & +1 deputy
+            if dead[0] == 1 && dead[1] < 3:
+                #sheriff dead & 1+ outlaw alive
+                return "Outlaws"
+            elif dead[0] == 1 && dead[1] == 3 && dead[2] == 0 && dead[4] == 1:
+                #sheriff & outlaws & deputy dead, renegade alive
+                return "Renegade"
+            elif dead[0] == 0 && dead[1] == 2 && dead[2] == 1:
+                #sheriff alive, outlaws and renegade dead
+                return "Sheriff/Deputy"
+            else: return None
+            
+        elif role.len() == 7: # +1 outlaw & +2 deputy
+            if dead[0] == 1 && dead[1] < 3:
+                #sheriff dead & 1+ outlaw alive
+                return "Outlaws"
+            elif dead[0] == 1 && dead[1] == 3 && dead[2] == 0 && dead[4] == 2:
+                #sheriff & outlaws & deputies dead, renegade alive
+                return "Renegade"
+            elif dead[0] == 0 && dead[1] == 2 && dead[2] == 1:
+                #sheriff alive, outlaws & renegade dead
+                return "Sheriff/Deputies"
+            else: return None
+                   
+        return False
 
 
 

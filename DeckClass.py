@@ -6,25 +6,37 @@ import Random
 
 class Deck:
 
-    deck = []
+    drawDeck = [] #draw pile
+    discardDeck = [] #discard pile
+    inPlay = [] #cards in play or in hand
+    
     def _init_(self):
         f = open(file)
         for line in f:
             l = (f.readline())
             c = Card(l)
-            deck.append(c)
+            drawDeck.append(c)
             
     def draw(self):
         r = randrange(0,deck.len(),1)
-        while deck[r].isDrawn():
-            r = randrange(0,deck.len(),1)
-        deck[r].draw()
-        return deck[r]
+        c = drawDeck[r]
+        inPlay.append(c)
+        drawDeck.remove(c)
+        return c
+
+    def drawDiscard(self):
+        c = discardDeck[-1] #last card discarded
+        inPlay.append(c)
+        discardDeck.remove(c)
+        return c
 
     def discard(self, c):
-        found = False;
-        while
+        discardDeck.append(c)
+        inPlay.remove(c)
 
-    def shuffleAll(self): #reset all cards to undrawn
-        for card in deck:
-            card.discard()
+    def shuffleAll(self): #reset all cards to drawDeck
+        for card in discardDeck:
+            drawDeck.append(card)
+        for card in inPlay:
+            drawDeck.append(card)
+            

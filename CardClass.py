@@ -6,16 +6,6 @@ class Card:
         card = l[0]
         suit = l[1]
         num = l[2]
-        drawn = False
-
-    def isDrawn(self):
-        return drawn
-    
-    def draw(self):
-        drawn = True
-    
-    def discard(self):
-        drawn = False
 
     def getSuit(self):
         return suit

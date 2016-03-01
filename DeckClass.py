@@ -17,12 +17,16 @@ class Deck:
             drawDeck.append(c)
             
     def draw(self):
+        if drawDeck.len() == 0:
+            self.shuffleAll()
         r = randrange(0,deck.len(),1)
         c = drawDeck[r]
         drawDeck.remove(c)
         return c
 
     def drawDiscard(self):
+        if discardDeck.len() == 0:
+            return False
         c = discardDeck[-1] #last card discarded
         discardDeck.remove(c)
         return c

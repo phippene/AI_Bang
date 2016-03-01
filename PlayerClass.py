@@ -5,12 +5,13 @@ import Card
 
 class PlayerBang:
 
-    #constructs character from playerNum, role, and starting hand
+    #constructs character from playerNum, role, starting hand, and playerType
     #character attribute not used at this time
-    def _init_(self, pNum, r, h):
+    def _init_(self, pNum, r, h, t):
         playerNum = pNum
         role = r
         hand = h
+        pType = t
         character = None
 
     #takes in a list of cards and adds them to the hand    
@@ -34,7 +35,10 @@ class PlayerBang:
         return hand
 
     #returns their playerNum
-    def displayPlayerNum(self):
+    def getPlayerNum(self):
         return playerNum
-    
+
+    #returns player type
+    def getType(self):
+        return ptype
     

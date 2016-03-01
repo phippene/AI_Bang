@@ -1,4 +1,5 @@
 #player class
+#Players must be numbered sequentially from 0 to at most 6 with no duplicates
 
 import Card
 

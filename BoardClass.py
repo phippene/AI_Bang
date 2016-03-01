@@ -189,8 +189,38 @@ class BoardsBang:
             return role[PlayerNum]
         else:
             return False
+############### pick up here ################
+    #takes in your number and the number of the person you want to shoot
+    #returns true if you can shoot them
+    def canShoot(self,me,other):
+        r = gun[me][0] # range of shot
+        if mustang
+        d1 = me-other
+        d2 = other-me
+#############################################        
 
-    
+    #takes in your number and the number of the person you want to panic
+    #returns true if you can panic them
+    def canPanic(self,me,other):
+        if me == 0:
+            if other == me+1 || other == role.len()-1:
+                return True
+            return False
+        elif me == role.len()-1:
+            if other == 0 || other == me-1:
+                return True
+            return False
+        elif other == me+1 || other == me-1:
+            return True
+        return False
+
+    #takes in the number of the other person and checks if they are the sheriff
+    #returns true if they are not the sheriff
+    def canJail(self,other):
+        if role[other] == "Sheriff":
+            return False
+        return True 
+
     #takes in a player number and returns true if they can play
     def canPlay(self,playerNum):
         return health[playerNum] > 0

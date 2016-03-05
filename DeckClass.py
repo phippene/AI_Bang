@@ -1,8 +1,8 @@
 #Bang Deck Class
 
-file = 'D:\AI\AI_Bang\BangDeck.txt
-import Card
-import Random
+file = "D:\AI\AI_Bang\BangDeck.txt"
+import CardClass
+import random
 
 class Deck:
 

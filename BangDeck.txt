@@ -27,7 +27,7 @@ duel,spade,11
 duel,club,8
 duel,diamond,12
 beer,heart,8
-barrel,heart,7
+beer,heart,7
 beer,heart,10
 beer,heart,11
 beer,heart,9

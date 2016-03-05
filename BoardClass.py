@@ -1,8 +1,8 @@
 #Board Class
 # tracks each player's health, as well as status/gun cards played on the board
 
-import Card
-import Random
+import CardClass
+import random
 
 class BoardsBang:
 
@@ -80,23 +80,23 @@ class BoardsBang:
     #returns true if card played and false if not status card
     #   or player already has one
     def playStatus(self,playerNum,c):
-        if c.getCard() == "barrel" && barrel[playerNum][0] == False:
+        if c.getCard() == "barrel" and barrel[playerNum][0] == False:
             barrel[playerNum][0] = True
             barrel[playerNum][1] = c
             return True
-        elif c.getCard() == "jail" && jail[playerNum][0] == False:
+        elif c.getCard() == "jail" and jail[playerNum][0] == False:
             jail[playerNum][0] = True
             jail[playerNum][1] = c
             return True
-        elif c.getCard() == "dynamite" && dynamite[playerNum][0] == False:
+        elif c.getCard() == "dynamite" and dynamite[playerNum][0] == False:
             dynamite[playerNum][0] = True
             dynamite[playerNum][1] = c
             return True
-        elif c.getCard() == "mustang" && mustang[playerNum][0] == False:
+        elif c.getCard() == "mustang" and mustang[playerNum][0] == False:
             mustang[playerNum][0] = True
             mustang[playerNum][1] = c
             return True
-        elif c.getCard() == "scope" && scope[playerNum][0] == False:
+        elif c.getCard() == "scope" and scope[playerNum][0] == False:
             scope[playerNum][0] = True
             scope[playerNum][1] = c
             return True
@@ -106,27 +106,27 @@ class BoardsBang:
     #returns card if card removed and false if not a status card or card
     #   not there
     def removeStatus(self,playerNum,cardName):
-        if cardName == "barrel" && barrel[playerNum][0] = True:
+        if cardName == "barrel" and barrel[playerNum][0] == True:
             barrel[playerNum][0] = False
             c = barrel[playerNum][1]
             barrel[playerNum][0] = None
             return c
-        elif cardName == "jail" && jail[playerNum][0] = True:
+        elif cardName == "jail" and jail[playerNum][0] == True:
             jail[playerNum][0] = False
             c = jail[playerNum][1]
             jail[playerNum][0] = None
             return c
-        elif cardName == "dynamite" && dynamite[playerNum][0] = True:
+        elif cardName == "dynamite" and dynamite[playerNum][0] == True:
             dynamite[playerNum][0] = False
             c = dynamite[playerNum][1]
             dynamite[playerNum][0] = None
             return c
-        elif cardName == "mustang" && mustang[playerNum][0] = True:
+        elif cardName == "mustang" and mustang[playerNum][0] == True:
             mustang[playerNum][0] = False
             c = mustang[playerNum][1]
             mustang[playerNum][0] = None
             return c
-        elif cardName == "scope" && scope[playerNum][0] = True:
+        elif cardName == "scope" and scope[playerNum][0] == True:
             scope[playerNum][0] = False
             c = scope[playerNum][1]
             scope[playerNum][0] = None
@@ -138,6 +138,26 @@ class BoardsBang:
     def checkHealth(self,playerNum):
         return health[playerNum]
 
+    #takes in a player number
+    #prints cards on board
+    def displayBoard(self,playerNum):
+        print("Player ",playerNum,"'s board")
+        if gun[playerNum][1] == None:
+            print("colt.45")
+        else:
+            print(gun[playerNum][1].getCard())
+        if mustang[playerNum][0]:
+            print(mustang[playerNum][1].getCard())
+        if barrel[playerNum][0]:
+            print(barrel[playerNum][1].getCard())
+        if scope[playerNum][0]:
+            print(scope[playerNum][1].getCard())
+        if dynamite[playerNum][0]:
+            print(dynamite[playerNum][1].getCard())
+        if jail[playerNum][0]:
+            print(jail[playerNum][1].getCard())
+            
+
     #takes in player number and increases their health by 1
     #returns false if player already dead or at max health
     #returns true if health increased
@@ -147,13 +167,13 @@ class BoardsBang:
                 if health[playerNum] == 5:
                     return False
                 else:
-                    health[playerNum]++
+                    health[playerNum] = health[playerNum]+1
                     return True
             else:
                 if health[playerNum] == 4:
                     return False
                 else:
-                    health[playerNum]++
+                    health[playerNum] = health[playerNum]+1
                     return True
         return False
 
@@ -169,7 +189,7 @@ class BoardsBang:
     #takes in player number and passes dynamite to the next player
     #returns true if pass sucessful, else returns false
     def passDynamite(self, playerNum):
-        if(dynamite[playerNum][0] = True):
+        if(dynamite[playerNum][0] == True):
             p = playerNum + 1
             if p == role.len():
                 p = 0
@@ -183,34 +203,44 @@ class BoardsBang:
     #takes in player number and if it is you inquiring
     #returns their role if they are dead or the sheriff, else returns false
     def showRole(self, playerNum, me = False):
-        if health[playerNum] == 0 || me:
+        if health[playerNum] == 0 or me:
             return role[playerNum]
         elif role[playerNum] == "Sheriff":
             return role[PlayerNum]
         else:
             return False
-############### pick up here ################
+
     #takes in your number and the number of the person you want to shoot
     #returns true if you can shoot them
     def canShoot(self,me,other):
         r = gun[me][0] # range of shot
-        if mustang
-        d1 = me-other
-        d2 = other-me
-#############################################        
+        np = role.len()-1
+        if mustang[other][0]:
+            other = other+1
+            np = np+1
+        if scope[me][0]:
+            r = r+1
+        if other > me:
+            d1 = other-me
+        else:
+            d1 = me-other
+        d2 = np-d1
+        if d1 <= r or d2 <= r:
+            return True
+        return False       
 
     #takes in your number and the number of the person you want to panic
     #returns true if you can panic them
     def canPanic(self,me,other):
         if me == 0:
-            if other == me+1 || other == role.len()-1:
+            if other == me+1 or other == role.len()-1:
                 return True
             return False
         elif me == role.len()-1:
-            if other == 0 || other == me-1:
+            if other == 0 or other == me-1:
                 return True
             return False
-        elif other == me+1 || other == me-1:
+        elif other == me+1 or other == me-1:
             return True
         return False
 
@@ -225,64 +255,75 @@ class BoardsBang:
     def canPlay(self,playerNum):
         return health[playerNum] > 0
 
+    #takes in playerNum and returns true if in jail
+    def inJail(self,playerNum):
+        return jail[playerNum][0]
+
+    #takes in playerNum and returns true if has dynamite
+    def hasDynamite(self,playerNum):
+        return dynamite[playerNum][0]
+
+    def gunIsVolcanic(self,playerNum):
+        return gun[pNum][0]
+    
     #returns winning group or None if no winner
     def Winner(self):
         dead = [0,0,0,0] #sheriff,outlaws,renegade,deputys
         for r in role: #cycle through players
             if health[r] == 0:
                 if role[r] == "Sheriff":
-                    dead[0]++
+                    dead[0] = dead[0]+1
                 elif role[r] == "Outlaw":
-                    dead[1]++
+                    dead[1] = dead[1]+1
                 elif role[r] == "Renegade":
-                    dead[2]++
+                    dead[2] = dead[2]+1
                 elif role[r] == "Deputy":
-                    dead[3]++
+                    dead[3] = dead[3]+1
                     
         if role.len() == 4:
-            if dead[0] == 1 && dead[1] < 2:
+            if dead[0] == 1 and dead[1] < 2:
                 #sheriff dead & 1+ outlaw alive
                 return "Outlaws"
-            elif dead[0] == 1 && dead[1] == 2 && dead[2] == 0:
+            elif dead[0] == 1 and dead[1] == 2 and dead[2] == 0:
                 #sheriff & outlaws dead, renegade alive
                 return "Renegade"
-            elif dead[0] == 0 && dead[1] == 2 && dead[2] == 1:
+            elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
                 #sheriff alive, outlaws & renegade dead
                 return "Sheriff"
             else: return None
             
         elif role.len() == 5: # +1 deputy
-            if dead[0] == 1 && dead[1] < 2:
+            if dead[0] == 1 and dead[1] < 2:
                 #sheriff dead & 1+ outlaw alive
                 return "Outlaws"
-            elif dead[0] == 1 && dead[1] == 2 && dead[2] == 0 && dead[4] == 1:
+            elif dead[0] == 1 and dead[1] == 2 and dead[2] == 0 and dead[4] == 1:
                 #sheriff & outlaws & deputy dead, renegade alive
                 return "Renegade"
-            elif dead[0] == 0 && dead[1] == 2 && dead[2] == 1:
+            elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
                 #sheriff alive, outlaws & renegade dead
                 return "Sheriff/Deputy"
             else: return None
             
         elif role.len() == 6: # +1 outlaw & +1 deputy
-            if dead[0] == 1 && dead[1] < 3:
+            if dead[0] == 1 and dead[1] < 3:
                 #sheriff dead & 1+ outlaw alive
                 return "Outlaws"
-            elif dead[0] == 1 && dead[1] == 3 && dead[2] == 0 && dead[4] == 1:
+            elif dead[0] == 1 and dead[1] == 3 and dead[2] == 0 and dead[4] == 1:
                 #sheriff & outlaws & deputy dead, renegade alive
                 return "Renegade"
-            elif dead[0] == 0 && dead[1] == 2 && dead[2] == 1:
+            elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
                 #sheriff alive, outlaws and renegade dead
                 return "Sheriff/Deputy"
             else: return None
             
         elif role.len() == 7: # +1 outlaw & +2 deputy
-            if dead[0] == 1 && dead[1] < 3:
+            if dead[0] == 1 and dead[1] < 3:
                 #sheriff dead & 1+ outlaw alive
                 return "Outlaws"
-            elif dead[0] == 1 && dead[1] == 3 && dead[2] == 0 && dead[4] == 2:
+            elif dead[0] == 1 and dead[1] == 3 and dead[2] == 0 and dead[4] == 2:
                 #sheriff & outlaws & deputies dead, renegade alive
                 return "Renegade"
-            elif dead[0] == 0 && dead[1] == 2 && dead[2] == 1:
+            elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
                 #sheriff alive, outlaws & renegade dead
                 return "Sheriff/Deputies"
             else: return None

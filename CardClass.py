@@ -13,5 +13,5 @@ class Card:
     def getNum(self):
         return num
 
-    def getCard(self)
+    def getCard(self):
         return card

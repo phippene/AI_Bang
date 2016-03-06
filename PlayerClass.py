@@ -1,52 +1,59 @@
 #player class
 #Players must be numbered sequentially from 0 to at most 6 with no duplicates
 
-import CardClass
+from CardClass import Card
 
 class PlayerBang:
 
     #constructs character from playerNum, role, starting hand, and playerType
     #character attribute not used at this time
-    def _init_(self, pNum, r, h, t):
-        playerNum = pNum
-        role = r
-        hand = h
-        pType = t
-        character = None
+    def __init__(self, pNum, r, h, t):
+        self.playerNum = pNum
+        self.role = r
+        self.hand = h
+        self.pType = t
+        self.character = None
 
     #takes in a list of cards and adds them to the hand    
     def addToHand(self,cards):
         for c in cards:
-            hand.append(c)
+            self.hand.append(c)
 
     #returns the current hand size
     def handSize(self):
-        return hand.len()
+        return len(self.hand)
 
     #takes in location of card in hand
     #returns card to be discarded or played
     def getFromHand(self,cardLoc):
-        c = hand[cardLoc]
-        hand.remove(hand[cardLoc])
+        c = self.hand[cardLoc]
+        self.hand.remove(self.hand[cardLoc])
         return c
 
     #prints hand
     def displayHand(self):
-        print("Player ",playerNum,"'s Hand")
+        print("Player ",self.playerNum,"'s Hand")
         i = 0
-        for card in hand:
-            print("0: ",card.getCard())
+        for card in self.hand:
+            print(i,": ",card.getCard())
             i = i+1
 
     #returns hand list
     def retHand(self):
-        return hand
+        return self.hand
     
     #returns their playerNum
     def getPlayerNum(self):
-        return playerNum
+        return self.playerNum
 
     #returns player type
     def getType(self):
-        return ptype
-    
+        return self.pType
+        
+    #Remove a given card from the hand
+    def removeFromHand(self, c):
+        self.hand.remove(c)
+
+    #Adds one card to hand
+    def addOneToHand(self, card):
+        self.hand.append(card)

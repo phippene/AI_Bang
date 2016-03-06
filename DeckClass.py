@@ -1,49 +1,50 @@
 #Bang Deck Class
 
-file = "D:\AI\AI_Bang\BangDeck.txt"
-import CardClass
-import random
+file = "BangDeck.txt"
+from CardClass import Card
+from random import randrange
 
 class Deck:
 
-    drawDeck = [] #draw pile
-    discardDeck = [] #discard pile
-    
-    def _init_(self):
+    def __init__(self):
+        self.drawDeck = []
+        self.discardDeck = []
         f = open(file)
-        for line in f:
-            l = (f.readline())
-            c = Card(l)
-            drawDeck.append(c)
+        for line in range(80):
+            l1 = f.readline().rstrip()
+            l2 = f.readline().rstrip()
+            l3 = f.readline().rstrip()
+            c = Card(l1, l2, l3)
+            self.drawDeck.append(c)
             
     def draw(self):
-        if drawDeck.len() == 0:
+        if len(self.drawDeck) == 0:
             self.shuffleAll()
-        r = randrange(0,deck.len(),1)
-        c = drawDeck[r]
-        drawDeck.remove(c)
+        r = randrange(0,len(self.drawDeck),1)
+        c = self.drawDeck[r]
+        self.drawDeck.remove(c)
         return c
 
     def drawDiscard(self):
-        if discardDeck.len() == 0:
+        if len(self.discardDeck) == 0:
             return False
-        c = discardDeck[-1] #last card discarded
-        discardDeck.remove(c)
+        c = self.discardDeck[-1] #last card discarded
+        self.discardDeck.remove(c)
         return c
 
     def discard(self, c):
-        discardDeck.append(c)
+        self.discardDeck.append(c)
 
     def shuffleAll(self): #reset all cards to drawDeck
-        for card in discardDeck:
-            drawDeck.append(card)
-            discardDeck.remove(card)
+        for card in self.discardDeck:
+            self.drawDeck.append(card)
+            self.discardDeck.remove(card)
             
     def resetDeck(self):
-        drawDeck = []
-        discardDeck = []
+        self.drawDeck = []
+        self.discardDeck = []
         f = open(file)
         for line in f:
             l = (f.readline())
             c = Card(l)
-            drawDeck.append(c)
+            self.drawDeck.append(c)

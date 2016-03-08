@@ -42,7 +42,8 @@ class BangGame:
             for player in self.players:
                 if self.boards.showRole(player.getPlayerNum(),True) == "Sheriff":
                    turn = player.getPlayerNum()
-            while self.boards.Winner() == None:
+            w = self.boards.Winner()
+            while w == None:
                 if self.players[turn].getType() == "dumbAI": #AI player
                    self.DumbAITurn(turn)
                 elif self.players[turn].getType() == "human":#do nothing
@@ -50,6 +51,8 @@ class BangGame:
                 turn = turn+1
                 if turn == self.numPlayers: #circle back
                    turn = 0
+                w = self.boards.Winner()
+            print("\nWinner:",w)
             #self.askPlayAgain()
         return None
 
@@ -57,7 +60,7 @@ class BangGame:
     def DumbAITurn(self,pNum):
         #check can play
         if self.boards.canPlay(pNum) == False:
-            print("Player",pNum,"is dead")
+            print("/nPlayer",pNum,"is dead")
             return None
         print("\nPlayer ",pNum,"'s Turn")        
         #self.boards.displayBoard(pNum)
@@ -70,6 +73,9 @@ class BangGame:
         #draw 2 cards
         self.startDraw(pNum)
         #play cards
+        for i in range(self.numPlayers):
+            print("Player",i,"health =",self.boards.getHealth(i))
+        print("\n")
         toDiscard = []
         hand = self.players[pNum].retHand()
         volcanic = self.boards.gunIsVolcanic(pNum)

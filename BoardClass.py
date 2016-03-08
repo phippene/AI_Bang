@@ -362,7 +362,7 @@ class BoardsBang:
                 #sheriff & outlaws & deputy dead, renegade alive
                 self.displayResults()
                 return "Renegade"
-            elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
+            elif dead[0] == 0 and dead[1] == 3 and dead[2] == 1:
                 #sheriff alive, outlaws and renegade dead
                 self.displayResults()
                 return "Sheriff/Deputy"
@@ -377,7 +377,7 @@ class BoardsBang:
                 #sheriff & outlaws & deputies dead, renegade alive
                 self.displayResults()
                 return "Renegade"
-            elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
+            elif dead[0] == 0 and dead[1] == 3 and dead[2] == 1:
                 #sheriff alive, outlaws & renegade dead
                 self.displayResults()
                 return "Sheriff/Deputies"

@@ -1,0 +1,148 @@
+Python 3.5.1 (v3.5.1:37a07cee5969, Dec  6 2015, 01:38:48) [MSC v.1900 32 bit (Intel)] on win32
+Type "copyright", "credits" or "license()" for more information.
+>>> 
+== RESTART: C:\Users\Elizabeth\OneDrive\AI\HW1\mancala\mancala\TicTacToe.py ==
+
+X12
+3O5
+678
+
+
+max, Alpha = 100.0 move = 6
+max, score = 100.0 move = 6
+min, Beta = 0.0 move = 6
+min, score = 0.0 move = 6
+min, Beta =  0.0 , Score =  0.0 . Aborted on move  8
+max, Alpha = 100.0 , Score = 100.0 . Aborted on move 8
+min, score = 100.0 move = 5
+min, score = 0.0 move = 6
+min, Beta =  0.0 , Score =  0.0 . Aborted on move  7
+min, Beta =  0.0 , Score =  0.0 . Aborted on move  8
+max, score = 0.0 move = 3
+max, score = 50.0 move = 8
+min, score = 50.0 move = 7
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  8
+max, score = 50.0 move = 6
+max, Alpha = 100.0 , Score = 50.0 . Aborted on move 7
+max, Alpha = 100.0 , Score = 50.0 . Aborted on move 8
+min, score = 50.0 move = 3
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  6
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  7
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  8
+max, score = 50.0 move = 5
+max, Alpha = 100.0 , Score = 50.0 . Aborted on move 6
+max, Alpha = 100.0 , Score = 50.0 . Aborted on move 7
+max, Alpha = 100.0 , Score = 50.0 . Aborted on move 8
+min, score = 50.0 move = 2
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  3
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  5
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  6
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  7
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  8
+move, Score = 50.0 move = 1
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 2
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 3
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 5
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 6
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 7
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 8
+chose move 1  with value 50.0
+
+XX2
+3O5
+678
+
+
+min, Beta = 0.0 move = 6
+min, score = 0.0 move = 6
+max, Alpha = 100.0 move = 6
+max, score = 100.0 move = 6
+max, Alpha = 100.0 , Score = 100.0 . Aborted on move 8
+min, Beta =  0.0 , Score =  0.0 . Aborted on move  8
+max, score = 0.0 move = 5
+max, score = 100.0 move = 6
+max, Alpha = 100.0 , Score = 100.0 . Aborted on move 7
+max, Alpha = 100.0 , Score = 100.0 . Aborted on move 8
+min, score = 100.0 move = 3
+min, score = 50.0 move = 8
+max, score = 50.0 move = 7
+max, Alpha = 100.0 , Score = 50.0 . Aborted on move 8
+min, score = 50.0 move = 6
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  7
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  8
+max, score = 50.0 move = 3
+max, Alpha = 100.0 , Score = 50.0 . Aborted on move 6
+max, Alpha = 100.0 , Score = 50.0 . Aborted on move 7
+max, Alpha = 100.0 , Score = 50.0 . Aborted on move 8
+min, score = 50.0 move = 5
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  6
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  7
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  8
+move, Score = 50.0 move = 2
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 3
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 5
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 6
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 7
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 8
+chose move 2  with value 50.0
+
+XXO
+3O5
+678
+
+
+max, Alpha = 100.0 move = 6
+max, score = 100.0 move = 6
+min, Beta = 0.0 move = 6
+min, score = 0.0 move = 6
+min, Beta =  0.0 , Score =  0.0 . Aborted on move  8
+max, Alpha = 100.0 , Score = 100.0 . Aborted on move 8
+min, score = 100.0 move = 5
+min, score = 0.0 move = 6
+min, Beta =  0.0 , Score =  0.0 . Aborted on move  7
+min, Beta =  0.0 , Score =  0.0 . Aborted on move  8
+move, Score = 0.0 move = 3
+max, score = 50.0 move = 8
+min, score = 50.0 move = 7
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  8
+max, score = 50.0 move = 6
+max, Alpha = 100.0 , Score = 50.0 . Aborted on move 7
+max, Alpha = 100.0 , Score = 50.0 . Aborted on move 8
+min, score = 50.0 move = 3
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  6
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  7
+min, Beta =  0.0 , Score =  50.0 . Aborted on move  8
+move, Score = 50.0 move = 5
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 6
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 7
+move, Beta = 0.0 , Score = 50.0 . Aborted on move 8
+chose move 5  with value 50.0
+
+XXO
+3OX
+678
+
+
+min, Beta = 50.0 move = 8
+min, score = 50.0 move = 8
+max, Alpha = 50.0 move = 7
+max, score = 50.0 move = 7
+min, score = 50.0 move = 7
+min, score = 50.0 move = 6
+max, Alpha = 100.0 move = 6
+max, score = 100.0 move = 6
+max, Alpha = 100.0 , Score = 100.0 . Aborted on move 8
+min, Beta =  50.0 , Score =  50.0 . Aborted on move  8
+move, Score = 50.0 move = 3
+move, Score = 100.0 move = 6
+move, Beta = 50.0 , Score = 100.0 . Aborted on move 7
+move, Beta = 50.0 , Score = 100.0 . Aborted on move 8
+chose move 6  with value 100.0
+
+XXO
+3OX
+O78
+
+
+O wins!
+>>> 

@@ -80,6 +80,13 @@ class BoardsBang:
         c = self.gun[playerNum][1]
         self.gun[playerNum][1] = None
         return c
+    
+    #Returns the gun in hand
+    def getGun(self, playerNum):
+        if self.gun[playerNum][1] != None:
+            return self.gun[playerNum][1]
+        else:
+            return self.gun[playerNum][1]
 
     #takes in player number who will get status card and card
     #returns true if card played and false if not status card
@@ -138,6 +145,20 @@ class BoardsBang:
             return c
         return False
 
+    #Returns the current status cards on the player
+    def getStatus(self,playerNum):
+        statusEffects = []
+        if self.barrel[playerNum][0]:
+            statusEffects.append(self.barrel[playerNum][1])
+        if self.jail[playerNum][0]:
+            statusEffects.append(self.jail[playerNum][1])
+        if self.dynamite[playerNum][0]:
+            statusEffects.append(self.dynamite[playerNum][1])
+        if self.mustang[playerNum][0]:
+            statusEffects.append(self.mustang[playerNum][1])
+        if self.scope[playerNum][0]:
+            statusEffects.append(self.scope[playerNum[1]])
+        return statusEffects
     #takes in player number
     #returns their current health
     def checkHealth(self,playerNum):

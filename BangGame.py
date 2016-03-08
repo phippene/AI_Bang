@@ -45,15 +45,13 @@ class BangGame:
             while self.boards.Winner() == None:
                 if self.players[turn].getType() == "dumbAI": #AI player
                    self.DumbAITurn(turn)
-                if self.players[turn].getType() == "ai":
-                    #do nothing
-                else: #human player
+                elif self.players[turn].getType() == "human":#do nothing
                     self.HumanTurn(turn)
                 turn = turn+1
                 if turn == self.numPlayers: #circle back
                    turn = 0
             print(self.boards.Winner())
-            self.askPlayAgain()
+            #self.askPlayAgain()
         return None
 
     #plays an AI turn for player pNum
@@ -62,7 +60,7 @@ class BangGame:
         if self.boards.canPlay(pNum) == False:
             return None
         print("\nPlayer ",pNum,"'s Turn")        
-        self.boards.displayBoard(pNum)
+        #self.boards.displayBoard(pNum)
         #check dynamite
         if self.checkDynamite(pNum) == False:
             return None
@@ -72,41 +70,119 @@ class BangGame:
         #draw 2 cards
         self.startDraw(pNum)
         #play cards
-<<<<<<< HEAD
         toDiscard = []
         hand = self.players[pNum].retHand()
-        volcanic = self.boards.gunIsVolcanic()
+        volcanic = self.boards.gunIsVolcanic(pNum)
         hasShot = False
-        for cNum in range(len(hand)):
+        cNum = 0
+        while cNum in range(len(hand)):
             if hand[cNum].getCard() in self.guns:
                 c = self.boards.removeGun(pNum)
                 if c != False:
                     self.deck.discard(c)
-                self.boards.playGun(hand[cNum])
+                self.boards.playGun(pNum,hand[cNum])
                 toDiscard.append(hand[cNum])
             elif hand[cNum].getCard() in self.meStatus:
                 name = hand[cNum].getCard()
+                #mustang
                 if name == "mustang" and self.boards.hasMustang(pNum) == False:
-                    self.boards.playStatus(hand[cNum])
-                else:
-                    c = self.boards.removeStatus(pNum,name)
-                    self.deck.discard(c)
+                    print("played Mustang")
+                    self.boards.playStatus(pNum,hand[cNum])
+                    toDiscard.append(hand[cNum])
+                #barrel
+                elif name == "barrel" and self.boards.hasBarrel(pNum) == False:
+                    print("played Barrel")
+                    self.boards.playStatus(pNum,hand[cNum])
+                    toDiscard.append(hand[cNum])
+                #scope
+                elif name == "scope" and self.boards.hasScope(pNum) == False:
+                    print("played scope")
+                    self.boards.playStatus(pNum,hand[cNum])
+                    toDiscard.append(hand[cNum])
+                #dynamite
+                elif name == "dynamite" and self.boards.hasMustang(pNum) == False:
+                    print("played dynamite")
                     self.boards.playStatus(pNum,hand[cNum])
                     toDiscard.append(hand[cNum])
             elif hand[cNum].getCard() == "bang":
                 if volcanic == True or hasShot == False:
-                    opp = pNum+1
+                    self.shootOne(pNum,hand[cNum])
+            #beer or saloon
+            elif hand[cNum].getCard() == "beer" or hand[cNum].getCard() == "saloon":
+                if self.boards.showRole(pNum,True) == "sheriff":
+                    if self.boards.getHealth(pNum) < 5:
+                        self.boards.increaseHealth(pNum)
+                        toDiscard.append(hand[cNum])
+                        if hand[cNum].getCard == "saloon":
+                            for player in range(self.numPlayers-1):
+                                if player != pNum:
+                                    self.boards.increaseHealth(player)
+                else:
+                    if self.boards.getHealth(pNum) < 4:
+                        self.boards.increaseHealth(pNum)
+                        toDiscard.append(hand[cNum])
+                        if hand[cNum].getCard == "saloon":
+                            for player in range(self.numPlayers-1):
+                                if player != pNum:
+                                    self.boards.increaseHealth(player)
+            #duel
+            elif hand[cNum].getCard() == "duel":
+                self.duel(pNum,hand[cNum])
+            #gatling
+            elif hand[cNum].getCard() == "gatling":
+                self.shootAll(pNum,False,hand[cNum])
+            #indians
+            elif hand[cNum].getCard() == "indians":
+                self.shootAll(pNum,True,hand[cNum])
+            #panic
+            elif hand[cNum].getCard() == "panic":
+                if self.panicCatBalou(pNum,True,hand[cNum]) == True:
+                    toDiscard.append(hand[cNum])
+            #cat balou
+            elif hand[cNum].getCard() == "cat balou":
+                if self.panicCatBalou(pNum,False,hand[cNum]) == True:
+                    toDiscard.append(hand[cNum])
+            #jail
+            elif hand[cNum].getCard() == "jail":
+                opp = pNum+1
+                if opp == self.numPlayers:
+                    opp = 0
+                while self.boards.canJail(opp) == False or self.boards.canPlay(opp) == False:
+                    opp += 1
                     if opp == self.numPlayers:
                         opp = 0
-                    while(self.boards.checkHealth(opp) == 0):
-                        opp += 1
-                        if opp == self.numPlayers:
-                            opp = 0
-                    if self.players[opp].getType() == 'human':
-                        self.missedResponse()
-=======
+                if opp != pNum:
+                    self.boards.playStatus(opp,hand[cNum])
+                    toDiscard.append(hand[cNum])
+            #general store
+            elif hand[cNum].getCard() == "general store":
+                self.generalStore(pNum,hand[cNum])
+                toDiscard.append(hand[cNum])
+            #stagecoach
+            elif hand[cNum].getCard() == "stagecoach":
+                c = [self.deck.draw(),self.deck.draw()]
+                self.players[pNum].addToHand(c)
+                toDiscard.append(hand[cNum])
+            #wells fargo
+            elif hand[cNum].getCard() == "wells fargo":
+                c = [self.deck.draw(),self.deck.draw(),self.deck.draw()]
+                self.players[pNum].addToHand(c)
+                toDiscard.append(hand[cNum])
+            hand = self.players[pNum].retHand()
+            volcanic = self.boards.gunIsVolcanic(pNum)
+            cNum += 1
+            print("cNum",cNum)
+        for card in toDiscard:
+            h = self.players[pNum].retHand()
+            found = False
+            i = 0
+            while found == False and i != len(h):
+                if h[i] == card:
+                    found = True
+                    c = self.players[pNum].getFromHand(i)
+                    self.deck.discard(c)
+                i += 1
         self.discardExtra(pNum)
->>>>>>> origin/master
         return None
 
     #plays a human turn for player pNum
@@ -210,52 +286,54 @@ class BangGame:
         return True
 
     def duel(self,pNum,c):
-        opp = int(input("who would you like to duel: "))
-        while opp == pNum or opp >= self.numPlayers or opp < 0:
-            print("Invalid player Number (enter -1 to retract card")
-            opp = int(input("Please pick another Player: "))
-            if opp == -1:
-                return False
-            self.deck.discard(c)
-        again = False
-        while again == False:
-            if self.bangResponse(opp) == False:
-                return True
-            if self.bangResponse(pNum) == False:
-                return True
+        if self.players[pNum].getType() == "human":
+            opp = int(input("who would you like to duel: "))
+            while opp == pNum or opp >= self.numPlayers or opp < 0:
+                print("Invalid player Number (enter -1 to retract card")
+                opp = int(input("Please pick another Player: "))
+                if opp == -1:
+                    return False
+                self.deck.discard(c)
+            again = False
+            while again == False:
+                if self.bangResponse(opp) == False:
+                    return True
+                if self.bangResponse(pNum) == False:
+                    return True
+        elif self.players[pNum].getType() == "dumbAI":
+            opp = pNum+1
+            if opp == self.numPlayers:
+                opp = 0
+            while self.boards.canPlay(opp) == False:
+                opp += 1
+                if opp == self.numPlayers:
+                    opp = 0
+            again = False
+            while again == False:
+                if self.bangResponse(opp) == False:
+                    return True
+                if self.bangResponse(pNum) == False:
+                    return True
         
     def panicCatBalou(self,pNum,panic,c):
         if panic:
             cp = False
-            while cp == False:
-                opp = int(input("Who would you like to panic: "))
-                if opp == -1:
-                        return False
-                while opp == pNum or opp >= self.numPlayers or opp < 0:
-                    print("Invalid player Number (enter -1 to retract card)")
-                    opp = int(input("Please pick another Player: "))
+            if self.players[pNum].getType() == "human":
+                while cp == False:
+                    opp = int(input("Who would you like to panic: "))
                     if opp == -1:
-                        return False
-                cp = self.boards.canPanic(pNum,opp)
-                if cp == False:
-                    print("That player is out of range (enter -1 to retract card) ")
-                    print("Please pick another Player")
-            self.boards.displayBoard(opp)
-            steal = int(input("Which card would you like to steal: "))
-            c2 = self.boards.removeStatus(opp,steal)
-            if c2 == False:
-                c2 = self.boards.removeGun(opp)
-                if c2 == False:
-                    stealable = False
-                else:
-                    stealable = True
-            while stealable == False:
-                print("Invalid card (enter -1 to retract card)")
-                steal = int(input("Please pick another card to steal: "))
-                if steal == -1:
-                    return False
-                if steal != "colt.45":
-                    stealable = True
+                            return False
+                    while opp == pNum or opp >= self.numPlayers or opp < 0:
+                        print("Invalid player Number (enter -1 to retract card)")
+                        opp = int(input("Please pick another Player: "))
+                        if opp == -1:
+                            return False
+                    cp = self.boards.canPanic(pNum,opp)
+                    if cp == False:
+                        print("That player is out of range (enter -1 to retract card) ")
+                        print("Please pick another Player")
+                self.boards.displayBoard(opp)
+                steal = int(input("Which card would you like to steal: "))
                 c2 = self.boards.removeStatus(opp,steal)
                 if c2 == False:
                     c2 = self.boards.removeGun(opp)
@@ -263,45 +341,126 @@ class BangGame:
                         stealable = False
                     else:
                         stealable = True
-            self.players[pNum].addOneToHand(c2)
-            self.deck.discard(c)
-            return True                        
-        else:
-            opp = int(input("Who would you like to cat balou: "))
-            while opp == pNum or opp >= self.numPlayers or opp < 0:
-                print("Invalid player Number (enter -1 to retract card")
-                opp = int(input("Please pick another Player: "))
-                if opp == -1:
-                    return False
-            self.boards.displayBoard(opp)
-            cb = int(input("Which card would you like to cat balou (-1 to retract card): "))
-            while cb < 0:
-                print("boom")
-                return False
-            c2 = self.boards.removeStatus(opp,cb)
-            if c2 == False:
-                c2 = self.boards.removeGun(opp)
-                if c2 == False:
-                    cbable = False
+                while stealable == False:
+                    print("Invalid card (enter -1 to retract card)")
+                    steal = int(input("Please pick another card to steal: "))
+                    if steal == -1:
+                        return False
+                    if steal != "colt.45":
+                        stealable = True
+                    c2 = self.boards.removeStatus(opp,steal)
+                    if c2 == False:
+                        c2 = self.boards.removeGun(opp)
+                        if c2 == False:
+                            stealable = False
+                        else:
+                            stealable = True
+                self.players[pNum].addOneToHand(c2)
+                self.deck.discard(c)
+                return True 
+            elif self.players[pNum].getType() == "dumbAI":
+                opp = pNum+1
+                if opp == self.numPlayers:
+                    opp = 0
+                while self.boards.canPlay(opp) == False:
+                    opp += 1
+                    if opp == self.numPlayers:
+                        opp = 0
+                if self.boards.hasMustang(opp) == True:
+                    if self.boards.hasScope(pNum) == True:
+                        #panic
+                        c1 = self.boards.removeStatus("barrel")
+                        if c1 == False:
+                            c1 = self.boards.removeStatus("scope")
+                            if c1 == False:
+                                self.boards.removeStatus("dynamite")
+                                if c1 == False:
+                                    self.boards.removeStatus("jail")
+                                    if c1 == False:
+                                        self.boards.removeGun("barrel")
+                                        if c1 == False:
+                                            return False;
+                        print("Player ",pNum," stole ",c1.getCard()," from player ",opp)
+                        self.players[pNum].addOneToHand(c1)
+                        return True
+                    else:
+                        return False
                 else:
-                    cbable = True
-            while cbable == False:
-                print("Invalid card (enter -1 to retract card) ")
-                cb = int(input("Please pick another card to cat balou: "))
-                if cb == -1:
+                    #panic
+                    c1 = self.boards.removeStatus(opp,"barrel")
+                    if c1 == False:
+                        c1 = self.boards.removeStatus(opp,"scope")
+                        if c1 == False:
+                            self.boards.removeStatus(opp,"dynamite")
+                            if c1 == False:
+                                self.boards.removeStatus(opp,"jail")
+                                if c1 == False:
+                                    c1 = self.boards.removeGun(opp)
+                                    if c1 == False:
+                                        return False;
+                    print("Player ",pNum," stole ",c1.getCard()," from player ",opp)
+                    self.players[pNum].addOneToHand(c1)
+                    return True
+        else:
+            if self.players[pNum].getType == 'human':
+                opp = int(input("Who would you like to cat balou: "))
+                while opp == pNum or opp >= self.numPlayers or opp < 0:
+                    print("Invalid player Number (enter -1 to retract card")
+                    opp = int(input("Please pick another Player: "))
+                    if opp == -1:
+                        return False
+                self.boards.displayBoard(opp)
+                cb = int(input("Which card would you like to cat balou (-1 to retract card): "))
+                while cb < 0:
+                    print("boom")
                     return False
-                if cb != "colt.45":
-                    cbable = True
                 c2 = self.boards.removeStatus(opp,cb)
                 if c2 == False:
                     c2 = self.boards.removeGun(opp)
                     if c2 == False:
                         cbable = False
                     else:
-                        cbable = True 
-            self.deck.discard(c)
-            self.deck.discard(c2)
-            return True
+                        cbable = True
+                while cbable == False:
+                    print("Invalid card (enter -1 to retract card) ")
+                    cb = int(input("Please pick another card to cat balou: "))
+                    if cb == -1:
+                        return False
+                    if cb != "colt.45":
+                        cbable = True
+                    c2 = self.boards.removeStatus(opp,cb)
+                    if c2 == False:
+                        c2 = self.boards.removeGun(opp)
+                        if c2 == False:
+                            cbable = False
+                        else:
+                            cbable = True 
+                self.deck.discard(c)
+                self.deck.discard(c2)
+                return True
+            elif self.players[pNum].getType() == "dumbAI":
+                opp = pNum+1
+                if opp == self.numPlayers:
+                    opp = 0
+                while self.boards.canPlay(opp) == False:
+                    opp += 1
+                    if opp == self.numPlayers:
+                        opp = 0
+                    #cat balou
+                c1 = self.boards.removeStatus(opp,"barrel")
+                if c1 == False:
+                    c1 = self.boards.removeStatus(opp,"scope")
+                    if c1 == False:
+                        self.boards.removeStatus(opp,"dynamite")
+                        if c1 == False:
+                            self.boards.removeStatus(opp,"jail")
+                            if c1 == False:
+                                c1 = self.boards.removeGun(opp)
+                                if c1 == False:
+                                    return False;
+                print("Player ",pNum," discarded ",c1.getCard()," from player ",opp)
+                self.deck.discard(c1)
+                return True
                       
     def generalStore(self,pNum,c):
         self.deck.discard(c)
@@ -315,72 +474,117 @@ class BangGame:
         if end < 0:
             end = self.numPlayers-1
         while circle == False:
-            print("Player ",loc)
-            i = 0
-            for card in avail:
-                print(i,": ",card.getCard())
-                i = i+1
-            c = int(input("which card would you like to take: "))
-            while c not in range(len(avail)):
-                print("invalid card")
+            if self.players[loc].getType() == "human":
+                print("Player ",loc)
+                i = 0
+                for card in avail:
+                    print(i,": ",card.getCard())
+                    i = i+1
                 c = int(input("which card would you like to take: "))
-            choice = []
-            choice.append(avail[c])
-            avail.remove(choice[0])
-            self.players[loc].addToHand(choice)
-            if loc != start:
-                self.discardExtra(loc)
-            loc = loc+1
-            if loc == self.numPlayers:
-                loc = 0
-            if loc == start:
-                circle = True
+                while c not in range(len(avail)):
+                    print("invalid card")
+                    c = int(input("which card would you like to take: "))
+                choice = []
+                choice.append(avail[c])
+                avail.remove(choice[0])
+                self.players[loc].addToHand(choice)
+                if loc != start:
+                    self.discardExtra(loc)
+                loc = loc+1
+                if loc == self.numPlayers:
+                    loc = 0
+                if loc == start:
+                    circle = True
+            elif self.players[loc].getType() == "dumbAI":
+                choice = []
+                choice.append(avail[0])
+                avail.remove(choice[0])
+                self.players[loc].addToHand(choice)
+                if loc != start:
+                    self.discardExtra(loc)
+                loc = loc+1
+                if loc == self.numPlayers:
+                    loc = 0
+                if loc == start:
+                    circle = True
         return True
                     
             
     def discardExtra(self,pNum):
-        while self.players[pNum].handSize() > self.boards.checkHealth(pNum):
-            self.players[pNum].displayHand()
-            print("Your health is ",self.boards.getHealth(pNum)," so your hand size is too big!")
-            c = int(input("Which card would you like to discard? "))
-            card = self.players[pNum].getFromHand(c)
-            self.deck.discard(card)
-        return True
+        if self.players[pNum].getType() == "human":
+            while self.players[pNum].handSize() > self.boards.checkHealth(pNum):
+                self.players[pNum].displayHand()
+                print("Your health is ",self.boards.getHealth(pNum)," so your hand size is too big!")
+                c = int(input("Which card would you like to discard? "))
+                card = self.players[pNum].getFromHand(c)
+                self.deck.discard(card)
+            return True
+        elif self.players[pNum].getType() == "dumbAI":
+            while self.players[pNum].handSize() > self.boards.checkHealth(pNum):
+                card = self.players[pNum].getFromHand(0)
+                self.deck.discard(card)
+            return True
+        else:
+            #smart AI stuff
+            return True
             
     def missedResponse(self,oppNum):
         h = self.players[oppNum].retHand()
-        for c in h:
-            if c.getCard() == 'missed':
-                print("would player ",oppNum," like to play a missed?")                
-                use = input("(y/n): ")
-                if use == "y":
+        if self.players[oppNum].getType() == "human":
+            for c in h:
+                if c.getCard() == 'missed':
+                    print("would player ",oppNum," like to play a missed?")                
+                    use = input("(y/n): ")
+                    if use == "y":
+                        self.players[oppNum].removeFromHand(c)
+                        self.deck.discard(c)
+                        return True
+                    else:
+                        self.boards.decreaseHealth(oppNum)
+                        print("Player ",oppNum," was shot!")
+                        return False
+        elif self.players[oppNum].getType() == "dumbAI":
+            for c in h:
+                if c.getCard() == 'missed':
                     self.players[oppNum].removeFromHand(c)
                     self.deck.discard(c)
                     return True
-                else:
-                    self.boards.decreaseHealth(oppNum)
-                    print("Player ",oppNum," was shot!")
-                    return False
-        self.boards.decreaseHealth(oppNum)
-        print("Player ",oppNum," was shot!")
-        return False
+            self.boards.decreaseHealth(oppNum)
+            print("Player ",oppNum," was shot!")
+            return False
+        else:
+            #smart AI stuff
+            return False
                          
     def bangResponse(self,oppNum):
         h = self.players[oppNum].retHand()
-        for c in h:
-            if c.getCard() == 'bang':
-                print("Would player ",oppNum," like to play a Bang?")
-                use = input("(y/n): ")
-                if use == "y":
+        if self.players[oppNum].getType() == "human":
+            for c in h:
+                if c.getCard() == 'bang':
+                    print("Would player ",oppNum," like to play a Bang?")
+                    use = input("(y/n): ")
+                    if use == "y":
+                        self.players[oppNum].removeFromHand(c)
+                        self.deck.discard(c)
+                        return True
+                    else:
+                        self.boards.decreaseHealth(oppNum)
+                        print("Player ",oppNum," was shot!")
+                        return False
+            self.boards.decreaseHealth(oppNum)
+            return False
+        elif self.players[oppNum].getType() == "dumbAI":
+            for c in h:
+                if c.getCard() == 'bang':
                     self.players[oppNum].removeFromHand(c)
                     self.deck.discard(c)
                     return True
-                else:
-                    self.boards.decreaseHealth(oppNum)
-                    print("Player ",oppNum," was shot!")
-                    return False
-        self.boards.decreaseHealth(oppNum)
-        return False
+            self.boards.decreaseHealth(oppNum)
+            print("Player ",oppNum," was shot!")
+            return False
+        else:
+            #smart AI stuff
+            return False
                          
     def shootAll(self,pNum,indians,c):
         if indians:
@@ -395,22 +599,36 @@ class BangGame:
         return True
                          
     def shootOne(self,pNum,c):
-        opp = int(input("Who would you like to shoot: "))
-        cs = False
-        while cs == False:
-            while opp == pNum or opp >= self.numPlayers or opp < 0:
-                print("Invalid player Number (enter -1 to retract card)")
-                opp = int(input("Please pick another Player: "))
-                if opp == -1:
-                    return False
-            cs = self.boards.canShoot(pNum,opp,self.numPlayers)
-            if cs == False:
-                print("That player is out of range (enter -1 to retract card)")
-                opp = int(input("Please pick another Player: "))
-                if opp == -1:
-                    return False
-        self.missedResponse(opp)
-        self.deck.discard(c)
+        if self.players[pNum].getType() == "human":
+            opp = int(input("Who would you like to shoot: "))
+            cs = False
+            while cs == False:
+                while opp == pNum or opp >= self.numPlayers or opp < 0 or self.boards.checkHealth(opp) == 0:
+                    print("Invalid player Number (enter -1 to retract card)")
+                    opp = int(input("Please pick another Player: "))
+                    if opp == -1:
+                        return False
+                cs = self.boards.canShoot(pNum,opp,self.numPlayers)
+                if cs == False:
+                    print("That player is out of range (enter -1 to retract card)")
+                    opp = int(input("Please pick another Player: "))
+                    if opp == -1:
+                        return False
+            self.missedResponse(opp)
+            self.deck.discard(c)
+        elif self.players[pNum].getType() == "dumbAI":
+            opp = pNum+1
+            if opp == self.numPlayers:
+                opp = 0
+            while(self.boards.checkHealth(opp) == 0):
+                opp += 1
+                if opp == self.numPlayers:
+                    opp = 0
+            if self.boards.canShoot(pNum,opp,self.numPlayers) == True:
+                    print("Player ",pNum,"shot at player ",opp)
+                    self.missedResponse(opp)
+                    return True
+            return False
         return True
                                     
     def humanPickCard(self,pNum):
@@ -449,7 +667,7 @@ class BangGame:
             print("Player ",pNum," is holding Dynamite! Do not draw a 2-9 of spades!")
             c = self.deck.draw()
             print("Player ",pNum," drew a ",c.getNum()," of ",c.getSuit(),"s")
-            if c.getSuit() == "spade" and c.getNum() >= 2 and c.getNum() <= 9:
+            if c.getSuit() == "spade" and c.getNum() >= '2' and c.getNum() <= '9':
                 self.deck.discard(c)
                 print("The Dynamite exploded! Player ",pNum," lost 3 health points!")
                 for i in range(3):

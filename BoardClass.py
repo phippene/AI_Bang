@@ -325,12 +325,15 @@ class BoardsBang:
                     
         if len(self.role) == 4:
             if dead[0] == 1 and dead[1] < 2:
+                self.displayResults()
                 #sheriff dead & 1+ outlaw alive
                 return "Outlaws"
             elif dead[0] == 1 and dead[1] == 2 and dead[2] == 0:
+                self.displayResults()
                 #sheriff & outlaws dead, renegade alive
                 return "Renegade"
             elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
+                self.displayResults()
                 #sheriff alive, outlaws & renegade dead
                 return "Sheriff"
             else: return None
@@ -338,40 +341,53 @@ class BoardsBang:
         elif len(self.role) == 5: # +1 deputy
             if dead[0] == 1 and dead[1] < 2:
                 #sheriff dead & 1+ outlaw alive
+                self.displayResults()
                 return "Outlaws"
             elif dead[0] == 1 and dead[1] == 2 and dead[2] == 0 and dead[4] == 1:
                 #sheriff & outlaws & deputy dead, renegade alive
+                self.displayResults()
                 return "Renegade"
             elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
                 #sheriff alive, outlaws & renegade dead
+                self.displayResults()
                 return "Sheriff/Deputy"
             else: return None
             
         elif len(self.role) == 6: # +1 outlaw & +1 deputy
             if dead[0] == 1 and dead[1] < 3:
                 #sheriff dead & 1+ outlaw alive
+                self.displayResults()
                 return "Outlaws"
             elif dead[0] == 1 and dead[1] == 3 and dead[2] == 0 and dead[4] == 1:
                 #sheriff & outlaws & deputy dead, renegade alive
+                self.displayResults()
                 return "Renegade"
             elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
                 #sheriff alive, outlaws and renegade dead
+                self.displayResults()
                 return "Sheriff/Deputy"
             else: return None
             
         elif len(self.role) == 7: # +1 outlaw & +2 deputy
             if dead[0] == 1 and dead[1] < 3:
                 #sheriff dead & 1+ outlaw alive
+                self.displayResults()
                 return "Outlaws"
             elif dead[0] == 1 and dead[1] == 3 and dead[2] == 0 and dead[4] == 2:
                 #sheriff & outlaws & deputies dead, renegade alive
+                self.displayResults()
                 return "Renegade"
             elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
                 #sheriff alive, outlaws & renegade dead
+                self.displayResults()
                 return "Sheriff/Deputies"
             else: return None
                    
         return False
 
-
+    def displayResults(self):
+        print("\n")
+        for i in range(len(self.role)):
+                print("Player:",i,"Role:",self.role[i],"Health:",self.health[i])
+        return
 

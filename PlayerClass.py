@@ -57,3 +57,6 @@ class PlayerBang:
     #Adds one card to hand
     def addOneToHand(self, card):
         self.hand.append(card)
+        
+    def getRole(self):
+        return self.role

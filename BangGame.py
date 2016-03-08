@@ -59,8 +59,13 @@ class BangGame:
         #check can play
         if self.boards.canPlay(pNum) == False:
             return None
-        print("\nPlayer ",pNum,"'s Turn")        
-        #self.boards.displayBoard(pNum)
+        print("\nPlayer ",pNum,"'s Turn")
+        if self.boards.getHealth(pNum) > 0:
+            print("Your health: ",self.boards.getHealth(pNum))
+            self.boards.displayBoard(pNum)
+            print("Your role: ",self.players[pNum].getRole())
+        else:
+            print("Player ",pNum," is dead!")
         #check dynamite
         if self.checkDynamite(pNum) == False:
             return None
@@ -107,6 +112,7 @@ class BangGame:
             elif hand[cNum].getCard() == "bang":
                 if volcanic == True or hasShot == False:
                     self.shootOne(pNum,hand[cNum])
+                hasShot = True
             #beer or saloon
             elif hand[cNum].getCard() == "beer" or hand[cNum].getCard() == "saloon":
                 if self.boards.showRole(pNum,True) == "sheriff":
@@ -191,7 +197,16 @@ class BangGame:
         if self.boards.canPlay(pNum) == False:
             return None
         print("\nPlayer ",pNum,"'s Turn")
-        self.boards.displayBoard(pNum)
+        if self.boards.getHealth(pNum) > 0:
+            print("Player ",pNum,"''s health:",self.boards.getHealth(pNum))
+            self.boards.displayBoard(pNum)
+            print("Your role: ",self.players[pNum].getRole())
+            print("Who is alive:")            
+            for playerNum in range(self.numPlayers):
+                if self.boards.getHealth(playerNum) > 0:
+                    print("Player ",playerNum)
+        else:
+            print("Player ",pNum," is dead!")
         #check dynamite
         if self.checkDynamite(pNum) == False:
             return None
@@ -369,15 +384,15 @@ class BangGame:
                 if self.boards.hasMustang(opp) == True:
                     if self.boards.hasScope(pNum) == True:
                         #panic
-                        c1 = self.boards.removeStatus("barrel")
+                        c1 = self.boards.removeStatus(opp,"barrel")
                         if c1 == False:
-                            c1 = self.boards.removeStatus("scope")
+                            c1 = self.boards.removeStatus(opp,"scope")
                             if c1 == False:
-                                self.boards.removeStatus("dynamite")
+                                self.boards.removeStatus(opp,"dynamite")
                                 if c1 == False:
-                                    self.boards.removeStatus("jail")
+                                    self.boards.removeStatus(opp,"jail")
                                     if c1 == False:
-                                        self.boards.removeGun("barrel")
+                                        self.boards.removeGun(opp,"barrel")
                                         if c1 == False:
                                             return False;
                         print("Player ",pNum," stole ",c1.getCard()," from player ",opp)

@@ -5,7 +5,6 @@ from PlayerClass import PlayerBang
 from DeckClass import Deck
 
 class BangGame:
-    whoShotWho = []
     #takes in number of players and sets up deck, players, and boards 
     def __init__(self, np):
         self.played = False
@@ -18,7 +17,6 @@ class BangGame:
         self.boards = BoardsBang(np)
         i = 0
         while i < np:
-            self.whoShotWho.append(-1)
             h = []
             r = self.boards.showRole(i,True)
             h.append(self.deck.draw())
@@ -45,7 +43,6 @@ class BangGame:
                    turn = player.getPlayerNum()
             w = self.boards.Winner()
             while w == None:
-                print("\nWho shot Who",self.whoShotWho)
                 if self.players[turn].getType() == "dumbAI": #AI player
                    self.DumbAITurn(turn)
                 elif self.players[turn].getType() == "human":#do nothing
@@ -648,7 +645,6 @@ class BangGame:
                         return False
             self.missedResponse(opp)
             self.deck.discard(c)
-            self.whoShotWho[pNum] = opp
         elif self.players[pNum].getType() == "dumbAI":
             opp = pNum+1
             if opp == self.numPlayers:
@@ -660,7 +656,6 @@ class BangGame:
             if self.boards.canShoot(pNum,opp,self.numPlayers) == True:
                     print("Player ",pNum,"shot at player ",opp)
                     self.missedResponse(opp)
-                    self.whoShotWho[pNum] = opp
                     return True
             return False
         return True

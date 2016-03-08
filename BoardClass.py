@@ -279,6 +279,14 @@ class BoardsBang:
             return True
         else:
             return False
+    def hasMustang(self,pNum):
+        return self.mustang[pNum][0]
+    
+    def hasBarrel(self,pNum):
+        return self.barrel[pNum][0]
+        
+    def hasScope(self,pNum):
+        return self.scope[pNum][0]
     
     #returns winning group or None if no winner
     def Winner(self):

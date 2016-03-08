@@ -27,10 +27,10 @@ class BangGame:
             if r == "Sheriff":
                 h.append(self.deck.draw())
             print("What type of player is player ", i)
-            t = input("Your choices are human or ai: ")
-            while t != "human" and t != "ai":
+            t = input("Your choices are human, dumbAI, or ai: ")
+            while t != "human" and t != "ai" and t != "dumbAI":
                 print("invalid input")
-                t = input("Your choices are human or ai: ")
+                t = input("Your choices are human, dumbAI, or ai: ")
             p = PlayerBang(i,r,h,t)
             self.players.append(p)
             i = i+1
@@ -43,8 +43,10 @@ class BangGame:
                 if self.boards.showRole(player.getPlayerNum(),True) == "Sheriff":
                    turn = player.getPlayerNum()
             while self.boards.Winner() == None:
-                if self.players[turn].getType() == "ai": #AI player
-                   self.AITurn(turn)
+                if self.players[turn].getType() == "dumbAI": #AI player
+                   self.DumbAITurn(turn)
+                if self.players[turn].getType() == "ai":
+                    #do nothing
                 else: #human player
                     self.HumanTurn(turn)
                 turn = turn+1
@@ -55,7 +57,7 @@ class BangGame:
         return None
 
     #plays an AI turn for player pNum
-    def AITurn(self,pNum):
+    def DumbAITurn(self,pNum):
         #check can play
         if self.boards.canPlay(pNum) == False:
             return None
@@ -69,6 +71,37 @@ class BangGame:
         #draw 2 cards
         self.startDraw(pNum)
         #play cards
+        toDiscard = []
+        hand = self.players[pNum].retHand()
+        volcanic = self.boards.gunIsVolcanic()
+        hasShot = False
+        for cNum in range(len(hand)):
+            if hand[cNum].getCard() in self.guns:
+                c = self.boards.removeGun(pNum)
+                if c != False:
+                    self.deck.discard(c)
+                self.boards.playGun(hand[cNum])
+                toDiscard.append(hand[cNum])
+            elif hand[cNum].getCard() in self.meStatus:
+                name = hand[cNum].getCard()
+                if name == "mustang" and self.boards.hasMustang(pNum) == False:
+                    self.boards.playStatus(hand[cNum])
+                else:
+                    c = self.boards.removeStatus(pNum,name)
+                    self.deck.discard(c)
+                    self.boards.playStatus(pNum,hand[cNum])
+                    toDiscard.append(hand[cNum])
+            elif hand[cNum].getCard() == "bang":
+                if volcanic == True or hasShot == False:
+                    opp = pNum+1
+                    if opp == self.numPlayers:
+                        opp = 0
+                    while(self.boards.checkHealth(opp) == 0):
+                        opp += 1
+                        if opp == self.numPlayers:
+                            opp = 0
+                    if self.players[opp].getType() == 'human':
+                        self.missedResponse()
         return None
 
     #plays a human turn for player pNum

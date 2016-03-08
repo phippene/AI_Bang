@@ -52,22 +52,27 @@ class BoardsBang:
         if c.getCard() == "volcanic":
             self.gun[playerNum][0] = 1
             self.gun[playerNum][1] = c
+            self.volcanic[playerNum] = True
             return True
         elif c.getCard() == "schofield":
             self.gun[playerNum][0] = 2
             self.gun[playerNum][1] = c
+            self.volcanic[playerNum] = False
             return True
         elif c.getCard() == "remington":
             self.gun[playerNum][0] = 3
             self.gun[playerNum][1] = c
+            self.volcanic[playerNum] = False
             return True
         elif c.getCard() == "carabine":
             self.gun[playerNum][0] = 4
             self.gun[playerNum][1] = c
+            self.volcanic[playerNum] = False
             return True
         elif c.getCard() == "winchester":
             self.gun[playerNum][0] = 5
             self.gun[playerNum][1] = c
+            self.volcanic[playerNum] = False 
             return True
         return False
 
@@ -76,6 +81,8 @@ class BoardsBang:
     def removeGun(self,playerNum):
         if self.gun[playerNum][1] == None:
             return False
+        if self.volcanic[playerNum]:
+            self.volcanic[playerNum] = False
         self.gun[playerNum][0] = 1
         c = self.gun[playerNum][1]
         self.gun[playerNum][1] = None
@@ -296,10 +303,11 @@ class BoardsBang:
         return self.dynamite[playerNum][0]
 
     def gunIsVolcanic(self,playerNum):
-        if self.gun[playerNum][0] == "volcanic":
+        if self.volcanic[playerNum]:
             return True
         else:
             return False
+        
     def hasMustang(self,pNum):
         return self.mustang[pNum][0]
     

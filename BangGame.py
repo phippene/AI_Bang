@@ -61,7 +61,8 @@ class BangGame:
         #check can play
         if self.boards.canPlay(pNum) == False:
             return None
-        print("\nPlayer ",pNum,"'s Turn")
+        print("\nPlayer ",pNum,"'s Turn")        
+        self.boards.displayBoard(pNum)
         #check dynamite
         if self.checkDynamite(pNum) == False:
             return None
@@ -71,6 +72,7 @@ class BangGame:
         #draw 2 cards
         self.startDraw(pNum)
         #play cards
+<<<<<<< HEAD
         toDiscard = []
         hand = self.players[pNum].retHand()
         volcanic = self.boards.gunIsVolcanic()
@@ -102,6 +104,9 @@ class BangGame:
                             opp = 0
                     if self.players[opp].getType() == 'human':
                         self.missedResponse()
+=======
+        self.discardExtra(pNum)
+>>>>>>> origin/master
         return None
 
     #plays a human turn for player pNum
@@ -110,7 +115,7 @@ class BangGame:
         if self.boards.canPlay(pNum) == False:
             return None
         print("\nPlayer ",pNum,"'s Turn")
-        print("Player ",pNum,"'s Health: ", self.boards.getHealth(pNum))
+        self.boards.displayBoard(pNum)
         #check dynamite
         if self.checkDynamite(pNum) == False:
             return None
@@ -145,11 +150,16 @@ class BangGame:
                 print("error")
                 return False
             else:
+
+                c = self.boards.removeGun(pNum)
                 self.boards.playGun(pNum,c)
+                self.deck.discard(c)
+                
         elif cname in self.meStatus:
             if self.boards.playStatus(pNum,c) == False:
                 print("you already have one of those")
                 return False
+                
         elif cname == "bang":
             if canPlayBang == True or self.boards.gunIsVolcanic(pNum):
                 print("attempting shot")                
@@ -399,12 +409,12 @@ class BangGame:
                 opp = int(input("Please pick another Player: "))
                 if opp == -1:
                     return False
-        print("gonna shoot a person")
         self.missedResponse(opp)
         self.deck.discard(c)
         return True
                                     
     def humanPickCard(self,pNum):
+        self.boards.displayBoard(pNum)
         self.players[pNum].displayHand()
         cnum = int(input("Which card would you like to play (-1 to end your turn): "))
         return cnum

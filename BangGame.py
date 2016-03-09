@@ -576,7 +576,7 @@ class BangGame:
                                 if c1 == False:
                                     self.boards.removeStatus(opp,"jail")
                                     if c1 == False:
-                                        self.boards.removeGun(opp,"barrel")
+                                        self.boards.removeGun(opp)
                                         if c1 == False:
                                             return False;
                         print("Player ",pNum," stole ",c1.getCard()," from player ",opp)

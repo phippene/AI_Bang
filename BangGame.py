@@ -6,7 +6,7 @@ from DeckClass import Deck
 
 class BangGame:
     #takes in number of players and sets up deck, players, and boards 
-    def __init__(self, np):
+    def __init__(self, np, playerType = None):
         self.played = False
         self.players = []
         self.alphaBetaPlayers = []
@@ -27,11 +27,16 @@ class BangGame:
             h.append(self.deck.draw())
             if r == "Sheriff":
                 h.append(self.deck.draw())
-            print("What type of player is player ", i)
-            t = input("Your choices are human, dumbAI, or ai: ")
-            while t != "human" and t != "ai" and t != "dumbAI":
-                print("invalid input")
+            
+            if playerType == None:
+                print("What type of player is player ", i)
                 t = input("Your choices are human, dumbAI, or ai: ")
+                while t != "human" and t != "ai" and t != "dumbAI":
+                    print("invalid input")
+                    t = input("Your choices are human, dumbAI, or ai: ")
+            
+            else:
+                t = playerType
 
             p = PlayerBang(i,r,h,t)
             self.players.append(p)
@@ -65,7 +70,8 @@ class BangGame:
                 w = self.boards.Winner()
             print("\nWinner:",w)
             #self.askPlayAgain()
-        return None
+        return w
+
 
     #plays an AI turn for player pNum
     def DumbAITurn(self,pNum):

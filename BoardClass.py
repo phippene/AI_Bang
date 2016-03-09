@@ -249,6 +249,8 @@ class BoardsBang:
     #takes in your number and the number of the person you want to shoot
     #returns true if you can shoot them
     def canShoot(self,me,other,numPlayers):
+        if me == other:
+            return False
         distance = self.gun[me][0]
         if self.mustang[other][0]:
             distance -= 1

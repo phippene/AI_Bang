@@ -403,3 +403,4 @@ class BoardsBang:
         for r in range(len(self.role)):
             if self.role[r] == "sheriff":
                 return self.health[r]
+        

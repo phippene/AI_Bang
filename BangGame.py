@@ -12,7 +12,7 @@ class BangGame:
         self.alphaBetaPlayers = []
         self.guns = ["volcanic","schofield","remington","carabine","winchester"]
         self.meStatus = ["barrel","dynamite","mustang","scope"]
-        self.ply = 0 #Stores depth for A-B search
+        self.ply = 10 #Stores depth for A-B search
         
         self.numPlayers = np
         self.deck = Deck()

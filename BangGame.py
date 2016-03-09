@@ -1,5 +1,5 @@
 #Bang Game
-
+from AlphaBetaAI import AlphaBetaAI
 from BoardClass import BoardsBang
 from PlayerClass import PlayerBang
 from DeckClass import Deck
@@ -9,9 +9,11 @@ class BangGame:
     def __init__(self, np):
         self.played = False
         self.players = []
+        self.alphaBetaPlayers = []
         self.guns = ["volcanic","schofield","remington","carabine","winchester"]
         self.meStatus = ["barrel","dynamite","mustang","scope"]
-
+        self.ply = 0 #Stores depth for A-B search
+        
         self.numPlayers = np
         self.deck = Deck()
         self.boards = BoardsBang(np)
@@ -30,8 +32,16 @@ class BangGame:
             while t != "human" and t != "ai" and t != "dumbAI":
                 print("invalid input")
                 t = input("Your choices are human, dumbAI, or ai: ")
+
             p = PlayerBang(i,r,h,t)
             self.players.append(p)
+
+            #Make the artificial players as needed
+            if t == "ai":
+                self.alphaBetaPlayers.append( AlphaBetaAI(np, i, r) )
+            else:
+                self.alphaBetaPlayers.append(0)
+            
             i = i+1
 
     #plays a game of Bang
@@ -45,6 +55,8 @@ class BangGame:
             while w == None:
                 if self.players[turn].getType() == "dumbAI": #AI player
                    self.DumbAITurn(turn)
+                elif self.players[turn].getType() == "ai": #AI player
+                   self.AlphaBetaAITurn(turn)
                 elif self.players[turn].getType() == "human":#do nothing
                     self.HumanTurn(turn)
                 turn = turn+1
@@ -115,6 +127,7 @@ class BangGame:
                     print("Player",pNum,"played dynamite")
                     self.boards.playStatus(pNum,hand[cNum])
                     toDiscard.append(hand[cNum])
+            #Bang!
             elif hand[cNum].getCard() == "bang":
                 if volcanic == True or hasShot == False:
                     self.shootOne(pNum,hand[cNum])
@@ -186,6 +199,162 @@ class BangGame:
             hand = self.players[pNum].retHand()
             volcanic = self.boards.gunIsVolcanic(pNum)
             cNum += 1
+        for card in toDiscard:
+            h = self.players[pNum].retHand()
+            found = False
+            i = 0
+            while found == False and i != len(h):
+                if h[i] == card:
+                    found = True
+                    c = self.players[pNum].getFromHand(i)
+                    self.deck.discard(c)
+                i += 1
+        self.discardExtra(pNum)
+        return None
+    
+    #plays an Alpha-Beta AI
+    def AlphaBetaAITurn(self,pNum):
+        #check can play
+        if self.boards.canPlay(pNum) == False:
+            print("\nPlayer",pNum,"is dead")
+            return None
+        print("\nPlayer ",pNum,"'s Turn")
+        if self.boards.getHealth(pNum) > 0:
+            print("Your health: ",self.boards.getHealth(pNum))
+            self.boards.displayBoard(pNum)
+            print("Your role: ",self.players[pNum].getRole())
+        else:
+            print("Player ",pNum," is dead!")
+        #check dynamite
+        if self.checkDynamite(pNum) == False:
+            return None
+        #check jail
+        if self.checkJail(pNum) == False:
+            return None
+        #draw 2 cards
+        self.startDraw(pNum)
+
+        #play cards
+        for i in range(self.numPlayers):
+            print("Player ",i," health = ",self.boards.getHealth(i))
+        print("\n")
+        toDiscard = []
+        hand = self.players[pNum].retHand()
+        volcanic = self.boards.gunIsVolcanic(pNum)
+        hasShot = False
+        cNum = 0
+        
+        #Go through cards playing non-bangs as needed
+        while cNum in range(len(hand)):
+            #Play guns unless volcanic
+            if hand[cNum].getCard() in self.guns and hand[cNum].getCard() != "volcanic":
+                c = self.boards.removeGun(pNum)
+                if c != False:
+                    self.deck.discard(c)
+                self.boards.playGun(pNum,hand[cNum])
+                toDiscard.append(hand[cNum])
+                print("Player",pNum,"played ",hand[cNum].getCard())
+            
+            #Play status cards
+            elif hand[cNum].getCard() in self.meStatus:
+                name = hand[cNum].getCard()
+                #mustang
+                if name == "mustang" and self.boards.hasMustang(pNum) == False:
+                    print("Player",pNum,"played Mustang")
+                    self.boards.playStatus(pNum,hand[cNum])
+                    toDiscard.append(hand[cNum])
+                #barrel
+                elif name == "barrel" and self.boards.hasBarrel(pNum) == False:
+                    print("Player",pNum,"played Barrel")
+                    self.boards.playStatus(pNum,hand[cNum])
+                    toDiscard.append(hand[cNum])
+                #scope
+                elif name == "scope" and self.boards.hasScope(pNum) == False:
+                    print("Player",pNum,"played scope")
+                    self.boards.playStatus(pNum,hand[cNum])
+                    toDiscard.append(hand[cNum])
+                #dynamite
+                elif name == "dynamite" and self.boards.hasMustang(pNum) == False:
+                    print("Player",pNum,"played dynamite")
+                    self.boards.playStatus(pNum,hand[cNum])
+                    toDiscard.append(hand[cNum])
+                    
+            #beer or saloon
+            elif hand[cNum].getCard() == "beer" or hand[cNum].getCard() == "saloon":
+                if self.boards.showRole(pNum,True) == "sheriff":
+                    if self.boards.getHealth(pNum) < 5:
+                        self.boards.increaseHealth(pNum)
+                        toDiscard.append(hand[cNum])
+                        if hand[cNum].getCard == "saloon":
+                            for player in range(self.numPlayers-1):
+                                if player != pNum:
+                                    self.boards.increaseHealth(player)                    
+                else:
+                    if self.boards.getHealth(pNum) < 4:
+                        self.boards.increaseHealth(pNum)
+                        toDiscard.append(hand[cNum])
+                        if hand[cNum].getCard == "saloon":
+                            for player in range(self.numPlayers-1):
+                                if player != pNum:
+                                    self.boards.increaseHealth(player)
+            #duel
+            elif hand[cNum].getCard() == "duel":
+                self.duel(pNum,hand[cNum])
+            #gatling
+            elif hand[cNum].getCard() == "gatling":
+                self.shootAll(pNum,False,hand[cNum])
+            #indians
+            elif hand[cNum].getCard() == "indians":
+                self.shootAll(pNum,True,hand[cNum])
+            #panic
+            elif hand[cNum].getCard() == "panic":
+                if self.panicCatBalou(pNum,True,hand[cNum]) == True:
+                    
+                    toDiscard.append(hand[cNum])
+            #cat balou
+            elif hand[cNum].getCard() == "cat balou":
+                if self.panicCatBalou(pNum,False,hand[cNum]) == True:
+                    toDiscard.append(hand[cNum])
+            #jail
+            elif hand[cNum].getCard() == "jail":
+                opp = pNum+1
+                if opp == self.numPlayers:
+                    opp = 0
+                while self.boards.canJail(opp) == False or self.boards.canPlay(opp) == False:
+                    opp += 1
+                    if opp == self.numPlayers:
+                        opp = 0
+                if opp != pNum:
+                    self.boards.playStatus(opp,hand[cNum])
+                    toDiscard.append(hand[cNum])
+            #general store
+            elif hand[cNum].getCard() == "general store":
+                self.generalStore(pNum,hand[cNum])
+                toDiscard.append(hand[cNum])
+            #stagecoach
+            elif hand[cNum].getCard() == "stagecoach":
+                print("Played Stagecoach")
+                c = [self.deck.draw(),self.deck.draw()]
+                self.players[pNum].addToHand(c)
+                toDiscard.append(hand[cNum])
+            #wells fargo
+            elif hand[cNum].getCard() == "wells fargo":
+                print("Played Wells Fargo")
+                c = [self.deck.draw(),self.deck.draw(),self.deck.draw()]
+                self.players[pNum].addToHand(c)
+                toDiscard.append(hand[cNum])
+            hand = self.players[pNum].retHand()
+            volcanic = self.boards.gunIsVolcanic(pNum)
+            cNum += 1
+        #BANG!!
+        #Determine who to shoot
+        for cNum in range(len(hand)):
+            if hand[cNum].getCard() == "bang":                    
+                if volcanic == True or hasShot == False:
+                    self.shootOne(pNum, hand[cNum])
+                hasShot = True
+                
+        #Discard cards
         for card in toDiscard:
             h = self.players[pNum].retHand()
             found = False
@@ -490,7 +659,11 @@ class BangGame:
         print("Player",pNum,"played General Store")
         self.deck.discard(c)
         avail = []
+        numRemainingPlayers = self.numPlayers
         for i in range(self.numPlayers):
+            if self.boards.getHealth(i) <= 0:
+                i -= 1
+        for i in range(numRemainingPlayers):
             avail.append(self.deck.draw())
         circle = False
         start = pNum
@@ -520,19 +693,20 @@ class BangGame:
                     loc = 0
                 if loc == start:
                     circle = True
-            elif self.players[loc].getType() == "dumbAI":
-                choice = []
-                choice.append(avail[0])
-                avail.remove(choice[0])
-                self.players[loc].addToHand(choice)
-                if loc != start:
-                    self.discardExtra(loc)
+            else:
+                if self.boards.getHealth(loc) > 0:
+                    choice = []
+                    choice.append(avail[0])
+                    avail.remove(choice[0])
+                    self.players[loc].addToHand(choice)
+                    if loc != start:
+                        self.discardExtra(loc)
+                    print("Player",loc,"took",choice[0].getCard())
                 loc = loc+1
                 if loc == self.numPlayers:
                     loc = 0
                 if loc == start:
                     circle = True
-                print("Player",i,"took",choice[0].getCard())
         return True
                     
             
@@ -570,7 +744,7 @@ class BangGame:
                         self.boards.decreaseHealth(oppNum)
                         print("Player ",oppNum," was shot!")
                         return False
-        elif self.players[oppNum].getType() == "dumbAI":
+        else:
             for c in h:
                 if c.getCard() == 'missed':
                     self.players[oppNum].removeFromHand(c)
@@ -579,9 +753,6 @@ class BangGame:
                     return True
             self.boards.decreaseHealth(oppNum)
             print("Player ",oppNum," was shot!")
-            return False
-        else:
-            #smart AI stuff
             return False
                          
     def bangResponse(self,oppNum):
@@ -601,7 +772,7 @@ class BangGame:
                         return False
             self.boards.decreaseHealth(oppNum)
             return False
-        elif self.players[oppNum].getType() == "dumbAI":
+        else:
             for c in h:
                 if c.getCard() == 'bang':
                     self.players[oppNum].removeFromHand(c)
@@ -611,19 +782,19 @@ class BangGame:
             self.boards.decreaseHealth(oppNum)
             print("Player ",oppNum," was shot!")
             return False
-        else:
-            #smart AI stuff
-            return False
-                         
+
     def shootAll(self,pNum,indians,c):
         if indians:
+            print("Player ",pNum," played Indians. Shoot or take damage!")
             for p in range(self.numPlayers):
                 if p != pNum:
                     self.bangResponse(p)
         else:
+            print("Player ",pNum," played Gatling. Miss or take damage!")
             for p in range(self.numPlayers):
                 if p != pNum:
                     self.missedResponse(p)
+        self.players[pNum].removeFromHand(c)
         self.deck.discard(c)
         return True
                          
@@ -658,6 +829,27 @@ class BangGame:
                     self.missedResponse(opp)
                     return True
             return False
+        
+        #IF you are a smarter AI, use the alpha-beta method to shoot someone
+        elif self.players[pNum].getType() == "ai":
+            #Get the person you should shoot using alpha-beta pruning            
+            v, opp = self.alphaBetaPlayers[pNum].alphaBetaMove(self.boards, self.ply)
+            if opp == self.numPlayers:
+                opp = 0
+            
+            #If you can't actually shoot the person you want to shoot, move to the next person
+            while(self.boards.checkHealth(opp) == 0):
+                opp += 1
+                if opp == self.numPlayers:
+                    opp = 0
+            #Shoot that person!
+            if self.boards.canShoot(pNum,opp,self.numPlayers):
+                print("Player ",pNum,"shot at player ",opp)
+                print("The value of this move was: ",v)
+                self.missedResponse(opp)
+                return True                
+            return False
+
         return True
                                     
     def humanPickCard(self,pNum):
@@ -682,10 +874,14 @@ class BangGame:
             if c.getSuit() != "heart":
                 print("Player ",pNum," must spend the night in Jail")
                 self.deck.discard(c)
+                jail = self.boards.removeStatus(pNum,"jail")
+                self.deck.discard(jail)
                 return False
             else:
                 print("Player ",pNum," is released from Jail")
                 self.deck.discard(c)
+                jail = self.boards.removeStatus(pNum,"jail")
+                self.deck.discard(jail)
                 return True
         return True
 

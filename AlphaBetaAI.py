@@ -1,5 +1,6 @@
+from copy import deepcopy
 
-def AlphaBetaAI:
+class AlphaBetaAI:
     
     def __init__(self, players, myPNum, role):
         self.role = role
@@ -10,9 +11,9 @@ def AlphaBetaAI:
     def alphaBetaMove(self, board, ply):
         #variables are fun!        
         move = -1
-        v = -INFINITY
-        alpha = -INFINITY
-        beta = INFINITY
+        v = -1e3000
+        alpha = -1e3000
+        beta = 1e3000
         turn = self
         
         #Try shooting every player
@@ -21,8 +22,8 @@ def AlphaBetaAI:
                 if ply == 0:
                     return (self.score(board), p)
 
-                if board.gameOver():
-                    return (-1, -1)  # Can't make a move, the game is over
+                if board.isWinner():
+                    return (-1e3000, -1)  # Can't make a move, the game is over
     
                 newBoard = deepcopy(board)
                 
@@ -35,7 +36,7 @@ def AlphaBetaAI:
                     nextPlayer -= self.numPlayers
                 
                 if not newBoard.showRole(nextPlayer, self.myPNum):
-                    nextRole == 0
+                    nextRole = 0
                 else:
                     nextRole = newBoard.showRole(nextPlayer, self.myPNum)
                 
@@ -44,7 +45,7 @@ def AlphaBetaAI:
                 
                 #Next player goes
                 s, oppMove = opp.minValueAB(newBoard, ply-1, turn, alpha, beta, self.myPNum-1)
-    
+                print(s," score for move ",oppMove)
                 if s > v:
                     move = oppMove
                     v = s
@@ -57,24 +58,24 @@ def AlphaBetaAI:
     #Find the minimum value for the next move
     def maxValueAB( self, board, ply, turn, a, b):
         #If the game is over, stop
-        if board.gameOver():
+        if board.isWinner():
             return (turn.score(board), -1)
 
         #defining constants
-        v = -INFINITY
+        v = -1e3000
         alpha = a
         move = -1
 
         #try shooting every player
-       for p in range(self.numPlayers):
+        for p in range(self.numPlayers):
             if p != self.myPNum:
                 #If you're at the end of your rope, stop
                 if ply == 0:
                     return (self.score(board), p)
 
                 #If check if the game is over
-                if board.gameOver():
-                    return (-1, -1)  
+                if board.isWinner():
+                    return (-1e3000, -1)  
     
                 #Copy the board
                 newBoard = deepcopy(board)
@@ -88,7 +89,7 @@ def AlphaBetaAI:
                     nextPlayer -= self.numPlayers
                 
                 if not newBoard.showRole(nextPlayer, self.myPNum):
-                    nextRole == 0
+                    nextRole = 0
                 else:
                     nextRole = newBoard.showRole(nextPlayer, self.myPNum)
                 
@@ -96,7 +97,7 @@ def AlphaBetaAI:
                 opp = AlphaBetaAI(self.numPlayers, nextPlayer, nextRole)
                 
                 #Next player goes
-                s, oppMove = opp.minValueAB(nextBoard, ply-1, turn, a, b, self.numPlayers - 1)
+                s, oppMove = opp.minValueAB(newBoard, ply-1, turn, a, b, self.numPlayers - 1)
     
                 #Check your values
                 if s > v:
@@ -113,11 +114,11 @@ def AlphaBetaAI:
     def minValueAB(self, board, ply, turn, a, b, numMins):
        
        #If the game is over, stop
-        if board.gameOver():
-            return turn.score(board), -1
+        if board.isWinner():
+            return (self.score(board), -1)
 
         #Defining numbers used        
-        v = INFINITY
+        v = 1e3000
         beta = b
         move = -1
 
@@ -129,8 +130,8 @@ def AlphaBetaAI:
                     return (self.score(board), p)
 
                 #If check if the game is over
-                if board.gameOver():
-                    return (-1, -1)  
+                if board.isWinner():
+                    return (-1e3000, -1)  
     
                 #Copy the board
                 newBoard = deepcopy(board)
@@ -144,7 +145,7 @@ def AlphaBetaAI:
                     nextPlayer -= self.numPlayers
                 
                 if not newBoard.showRole(nextPlayer, self.myPNum):
-                    nextRole == 0
+                    nextRole = 0
                 else:
                     nextRole = newBoard.showRole(nextPlayer, self.myPNum)
                 
@@ -154,9 +155,9 @@ def AlphaBetaAI:
                 #Next player goes
 
                 if numMins > 0:
-                    s, oppMove = opp.minValueAB(nextBoard, ply-1, turn, a, b, numMins-1)
+                    s, oppMove = opp.minValueAB(newBoard, ply-1, turn, a, b, numMins-1)
                 else:
-                    s, oppMove = opp.maxValueAB(nextBoard, ply-1, turn, a, b)
+                    s, oppMove = opp.maxValueAB(newBoard, ply-1, turn, a, b)
     
 
                 if s < v:
@@ -184,9 +185,7 @@ def AlphaBetaAI:
             for p in range(self.numPlayers):
                 if p != self.myPNum:
                     if board.showRole(p, self.myPNum):
-                        if board.showRole(p, self.myPNum) != "Deputy":
-                            score += 100000
-                        else:
+                        if board.showRole(p, self.myPNum) == "Deputy":
                             score -= 10
 
         elif self.role == "Outlaw":
@@ -207,12 +206,13 @@ def AlphaBetaAI:
             for p in range(self.numPlayers):
                 if p != self.myPNum:
                     if board.showRole(p, self.myPNum):
+                        print(board.showRole(p, self.myPNum)," and ",board.getSheriffHealth())
                         if board.showRole(p, self.myPNum) != "Sheriff" and board.getSheriffHealth() > 0:
                             score += 10000
 
         #Have I won?
-        if board.winner() != None:
-            if self.role in board.winner():
+        if board.isWinner():
+            if self.role in board.Winner():
                 score += 1000000000
             else:
                 score -= 1000000000
@@ -235,38 +235,57 @@ def AlphaBetaAI:
         
         #How many other people can shoot me?
         for p in range(self.numPlayers):
-            if board.canShootMe(p,self.myPNum,numPlayers):
+            if board.canShoot(p, self.myPNum, self.numPlayers):
                 if self.role == "Sheriff":
                     score -= 100
                 else:
                     score -= 25
         
         #Number of people left to kill before I win:
+        #Possible refactoring: sheriff only needs to kill 4 people at most, etc
         if self.role == "Sheriff":
-            numOutlawsDead = 0            
+            numOutlawsLeft = self.numPlayers           
             for p in range(self.numPlayers):
                 if p != self.myPNum:
                     if board.showRole(p, self.myPNum):
                         if board.showRole(p, self.myPNum) == "Outlaw" or board.showRole(p, self.myPNum) == "Renegade":
-                            numOutlawsDead += 1
-            score -= 30*numOutlawsDead
+                            numOutlawsLeft -= 1
+            score -= 30*numOutlawsLeft
         
         if self.role == "Deputy":
-            numOutlawsDead = 0            
+            numOutlawsLeft = self.numPlayers       
             for p in range(self.numPlayers):
                 if p != self.myPNum:
                     if board.showRole(p, self.myPNum):
                         if board.showRole(p, self.myPNum) == "Outlaw" or board.showRole(p, self.myPNum) == "Renegade":
-                            numOutlawsDead += 1
-            score -= 30*numOutlawsDead
+                            numOutlawsLeft -= 1
+            score -= 30*numOutlawsLeft
 
         if self.role == "Renegade":
-            numPeopleDead = 0            
+            numPeopleLeft = self.numPlayers
             for p in range(self.numPlayers):
                 if p != self.myPNum:
                     if board.showRole(p, self.myPNum):
-                        numPeopleDead += 1
-            score -= 30*numPeopleDead
+                        numPeopleLeft -= 1
+            score -= 30*numPeopleLeft
+            
+        #Health of my opponents vs me:
+        if self.role == "Sheriff":
+            if board.health[self.myPNum] == 5:
+                score += 100
+            else:
+                score += board.health[self.myPNum]*15
+            for p in range(self.numPlayers):
+                if p != self.myPNum:
+                    score -= 10*board.health[p]
+        else:
+            if board.health[self.myPNum] == 4:
+                score += 100
+            else:
+                score += board.health[self.myPNum]*15
+            for p in range(self.numPlayers):
+                if p != self.myPNum:
+                    score -= 10*board.health[p]
         
         #Return score
         return score

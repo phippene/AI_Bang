@@ -164,7 +164,7 @@ class BoardsBang:
         if self.mustang[playerNum][0]:
             statusEffects.append(self.mustang[playerNum][1])
         if self.scope[playerNum][0]:
-            statusEffects.append(self.scope[playerNum[1]])
+            statusEffects.append(self.scope[playerNum][1])
         return statusEffects
     #takes in player number
     #returns their current health
@@ -400,9 +400,72 @@ class BoardsBang:
         for i in range(len(self.role)):
                 print("Player:",i,"Role:",self.role[i],"Health:",self.health[i])
         return
+    
+    def isWinner(self):
+        dead = [0,0,0,0] #sheriff,outlaws,renegade,deputys
+        for r in range(len(self.role)): #cycle through players
+            if self.health[r] == 0:
+                if self.role[r] == "Sheriff":
+                    dead[0] = dead[0]+1
+                elif self.role[r] == "Outlaw":
+                    dead[1] = dead[1]+1
+                elif self.role[r] == "Renegade":
+                    dead[2] = dead[2]+1
+                elif self.role[r] == "Deputy":
+                    dead[3] = dead[3]+1
+                    
+        if len(self.role) == 4:
+            if dead[0] == 1 and dead[1] < 2:
+                #sheriff dead & 1+ outlaw alive
+                return True
+            elif dead[0] == 1 and dead[1] == 2 and dead[2] == 0:
+                #sheriff & outlaws dead, renegade alive
+                return True
+            elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
+                #sheriff alive, outlaws & renegade dead
+                return True
+            else: return False
+            
+        elif len(self.role) == 5: # +1 deputy
+            if dead[0] == 1 and dead[1] < 2:
+                #sheriff dead & 1+ outlaw alive
+                return True
+            elif dead[0] == 1 and dead[1] == 2 and dead[2] == 0 and dead[4] == 1:
+                #sheriff & outlaws & deputy dead, renegade alive
+                return True
+            elif dead[0] == 0 and dead[1] == 2 and dead[2] == 1:
+                #sheriff alive, outlaws & renegade dead
+                return True
+            else: return False
+            
+        elif len(self.role) == 6: # +1 outlaw & +1 deputy
+            if dead[0] == 1 and dead[1] < 3:
+                #sheriff dead & 1+ outlaw alive
+                return True
+            elif dead[0] == 1 and dead[1] == 3 and dead[2] == 0 and dead[4] == 1:
+                #sheriff & outlaws & deputy dead, renegade alive
+                return True
+            elif dead[0] == 0 and dead[1] == 3 and dead[2] == 1:
+                #sheriff alive, outlaws and renegade dead
+                return True
+            else: return False
+            
+        elif len(self.role) == 7: # +1 outlaw & +2 deputy
+            if dead[0] == 1 and dead[1] < 3:
+                #sheriff dead & 1+ outlaw alive
+                return True
+            elif dead[0] == 1 and dead[1] == 3 and dead[2] == 0 and dead[4] == 2:
+                #sheriff & outlaws & deputies dead, renegade alive
+                return True
+            elif dead[0] == 0 and dead[1] == 3 and dead[2] == 1:
+                #sheriff alive, outlaws & renegade dead
+                return True
+            else: return False
+                   
+        return False
 
     def getSheriffHealth(self):
         for r in range(len(self.role)):
-            if self.role[r] == "sheriff":
+            if self.role[r] == "Sheriff":
                 return self.health[r]
         

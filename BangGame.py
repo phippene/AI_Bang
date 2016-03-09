@@ -5,7 +5,6 @@ from PlayerClass import PlayerBang
 from DeckClass import Deck
 
 class BangGame:
-
     #takes in number of players and sets up deck, players, and boards 
     def __init__(self, np):
         self.played = False

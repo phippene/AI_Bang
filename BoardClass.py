@@ -401,3 +401,7 @@ class BoardsBang:
                 print("Player:",i,"Role:",self.role[i],"Health:",self.health[i])
         return
 
+    def getSheriffHealth(self):
+        for r in range(len(self.role)):
+            if self.role[r] == "sheriff":
+                return self.health[r]
